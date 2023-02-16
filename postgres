@@ -1,0 +1,59 @@
+CREATE TABLE products (
+ product_id BIGSERIAL,
+ name VARCHAR,
+ slogan VARCHAR,
+ description VARCHAR,
+ category VARCHAR,
+ default_price SMALLINT
+);
+
+ALTER TABLE products ADD CONSTRAINT products_pkey PRIMARY KEY (product_id);
+
+CREATE TABLE product_styles (
+ style_id INTEGER,
+ product_id BIGSERIAL,
+ original_price SMALLINT,
+ sale_price SMALLINT,
+ default BOOLEAN
+);
+
+ALTER TABLE product_styles ADD CONSTRAINT product_styles_pkey PRIMARY KEY (product_id);
+
+CREATE TABLE related_products (
+ product_id BIGSERIAL,
+ related_product_id INTEGER
+);
+
+ALTER TABLE related_products ADD CONSTRAINT related_products_pkey PRIMARY KEY (product_id);
+
+CREATE TABLE product_features (
+ product_id BIGSERIAL,
+ feature VARCHAR,
+ value INTEGER
+);
+
+ALTER TABLE product_features ADD CONSTRAINT product_features_pkey PRIMARY KEY (product_id);
+
+CREATE TABLE sku (
+ style_id BIGSERIAL,
+ size VARCHAR,
+ quantity INTEGER
+);
+
+ALTER TABLE sku ADD CONSTRAINT sku_pkey PRIMARY KEY (style_id);
+
+CREATE TABLE product_style_photos (
+ style_id BIGSERIAL,
+ type VARCHAR,
+ url VARCHAR
+);
+
+ALTER TABLE product_style_photos ADD CONSTRAINT product_style_photos_pkey PRIMARY KEY (style_id);
+
+
+ALTER TABLE product_styles ADD CONSTRAINT product_styles_product_id_fkey FOREIGN KEY (product_id) REFERENCES products(product_id);
+
+ALTER TABLE product_features ADD CONSTRAINT product_features_product_id_fkey FOREIGN KEY (product_id) REFERENCES products(product_id);
+
+ALTER TABLE product_style_photos ADD CONSTRAINT product_style_photos_style_id_fkey
+FOREIGN KEY (style_id) REFERENCES product_styles(style_id);
