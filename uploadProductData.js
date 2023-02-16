@@ -1,30 +1,9 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-const cors = require('cors');
 var mongoose = require('mongoose');
-var multer = require('multer');
 var csv = require('csvtojson');
 require('dotenv/config');
 const models = require('./model.js')
-var upload = multer({ dest: 'uploads/' });
+const db = require('./db.js')
 
-
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-
-async function connectToDatabase() {
-  try {
-    await mongoose.connect('mongodb://localhost:27017/SDC', { useNewUrlParser: true, useUnifiedTopology: true });
-    mongoose.set('strictQuery', false);
-    console.log('Connected to the database!');
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
 
 async function uploadProducts(jsonObj) {
   const products = jsonObj.map((item) => ({
@@ -37,7 +16,7 @@ async function uploadProducts(jsonObj) {
     related_products: []
   }));
   try {
-    await models.Product.insertMany(products);
+    await models.Products.insertMany(products);
     console.log('Data added to the database!');
   } catch (error) {
     console.log(error);
@@ -55,7 +34,7 @@ async function uploadRelatedProducts(jsonObj) {
         relatedArr.push(Number(row.related_product_id));
       } else {
         // upload existing array if id's don't match
-        await models.Product.findOneAndUpdate(
+        await models.Products.findOneAndUpdate(
           { id: current_product_id },
           { related_products: relatedArr },
           { upsert: true }
@@ -76,7 +55,7 @@ async function uploadRelatedProducts(jsonObj) {
 // upload product data
 async function uploadData() {
   try {
-    await connectToDatabase();
+    await db();
     const productJson = await csv().fromFile('./sampleData/productSample.csv');
     await uploadProducts(productJson);
     const relatedJson = await csv().fromFile('./sampleData/relatedSample.csv');
@@ -91,3 +70,5 @@ uploadData();
 
 
 // example of batch size: models.Product.insertMany(products, { batchSize: 1000 })
+// if this doesn't work, there are scripts to run in the terminal that can run in diff instances
+// leave a console.log to make sure you know things are running

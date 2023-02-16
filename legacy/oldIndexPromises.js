@@ -7,6 +7,7 @@ var multer = require('multer');
 var csv = require('csvtojson');
 require('dotenv/config');
 const models = require('./model.js')
+const db = require('./db.js')
 var upload = multer({ dest: 'uploads/' });
 
 

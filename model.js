@@ -32,7 +32,7 @@ const productSchema = new mongoose.Schema({
 
 const productStylesSchema = new mongoose.Schema({
   product_id: {
-    type: String,
+    type: Number,
     required: true
   },
   results: [
@@ -46,7 +46,7 @@ const productStylesSchema = new mongoose.Schema({
         required: true
       },
       original_price: {
-        type: String,
+        type: Number,
         required: true
       },
       sale_price: String,
@@ -56,24 +56,67 @@ const productStylesSchema = new mongoose.Schema({
         url: String
       }],
       skus: {
-        type: Map,
-        of: new mongoose.Schema({
-          size: {
-            type: String,
-            required: true
-          },
+        type: Object,
+        of: {
           quantity: {
             type: Number,
             required: true
           },
-        }),
+          size: {
+            type: String,
+            required: true
+          }
+        }
       }
-    }]
-  })
+    }
+  ]
+})
 
+
+// const productStylesSchema = new mongoose.Schema({
+//   product_id: {
+//     type: Number,
+//     required: true
+//   },
+//   results: [
+//     {
+//       style_id: {
+//         type: Number,
+//         required: true
+//       },
+//       name: {
+//         type: String,
+//         required: true
+//       },
+//       original_price: {
+//         type: Number,
+//         required: true
+//       },
+//       sale_price: String,
+//       default: Boolean,
+//       photos: [{
+//         thumbnail_url: String,
+//         url: String
+//       }],
+//       skus: {
+//         type: Object,
+//         of: {
+//           quantity: {
+//             type: Number,
+//             required: true
+//           },
+//           size: {
+//             type: String,
+//             required: true
+//           }
+//         }
+//       }
+//     }
+//   ]
+// })
 
 const models = {
-  Product: mongoose.model('Product', productSchema),
+  Products: mongoose.model('Products', productSchema),
   ProductStyles: mongoose.model('ProductStyles', productStylesSchema)
 }
 
