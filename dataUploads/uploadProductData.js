@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var csv = require('csvtojson');
 require('dotenv/config');
-const { Products } = require('./model.js');
-const db = require('./db.js');
+const { Products } = require('../model.js');
+const db = require('../db.js');
 
 async function uploadProducts(jsonObj) {
   for (let i = 0; i < jsonObj.length; i++) {
@@ -56,27 +56,44 @@ async function uploadRelatedProducts(jsonObj) {
   }
 }
 
-// upload product data
-async function uploadData() {
+// upload real product data
+async function uploadProductData() {
   try {
     await db();
-    const productJson = await csv().fromFile('./sampleData/productSample.csv');
+    const productJson = await csv().fromFile('data/product.csv');
     console.log('uploading products...');
     console.time('product data');
     await uploadProducts(productJson);
-    console.log('products finished! uploading related products...');
     console.timeEnd('product data');
+    console.log('products finished! uploading related products...');
     console.time('related product data');
-    const relatedJson = await csv().fromFile('./sampleData/relatedSample.csv');
+    const relatedJson = await csv().fromFile('data/related.csv');
     await uploadRelatedProducts(relatedJson);
+    console.log('related products finished!');
+    console.timeEnd('related product data');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// upload sample product data
+async function uploadSampleProductData() {
+  try {
+    await db();
+    const productJson = await csv().fromFile('sampleData/productSample.csv');
+    console.log('uploading products...');
+    console.time('product data');
+    await uploadProducts(productJson);
+    console.timeEnd('product data');
+    console.log('products finished! uploading related products...');
+    console.time('related product data');
+    const relatedJson = await csv().fromFile('sampleData/relatedSample.csv');
+    await uploadRelatedProducts(relatedJson);
+    console.timeEnd('related product data');
     console.log('related products finished!');
   } catch (error) {
     console.log(error);
   }
 }
 
-uploadData();
-
-// example of batch size: models.Product.insertMany(products, { batchSize: 1000 })
-// if this doesn't work, there are scripts to run in the terminal that can run in diff instances
-// leave a console.log to make sure you know things are running
+module.exports = { uploadProductData, uploadSampleProductData };

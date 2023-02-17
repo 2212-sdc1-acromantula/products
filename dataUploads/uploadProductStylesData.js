@@ -1,7 +1,7 @@
 var csv = require('csvtojson');
 require('dotenv/config');
-const models = require('./model.js');
-const db = require('./db.js');
+const models = require('../model.js');
+const db = require('../db.js');
 
 async function uploadProductStyles(jsonObj) {
   let currentProductId;
@@ -37,18 +37,34 @@ async function uploadProductStyles(jsonObj) {
   }
 }
 
-async function uploadData() {
+// upload real data
+async function uploadProductStylesData() {
   try {
     await db();
     console.time('product styles');
-    const styleJson = await csv().fromFile('./sampleData/stylesSample.csv');
+    const styleJson = await csv().fromFile('data/styles.csv');
     console.log('uploading style data...');
     await uploadProductStyles(styleJson);
-    console.log('styles uploaded!');
     console.timeEnd('product styles');
+    console.log('styles uploaded!');
   } catch (error) {
     console.log(error);
   }
 }
 
-uploadData();
+// upload sample data
+async function uploadSampleProductStylesData() {
+  try {
+    await db();
+    console.time('product styles');
+    const styleJson = await csv().fromFile('sampleData/stylesSample.csv');
+    console.log('uploading style data...');
+    await uploadProductStyles(styleJson);
+    console.timeEnd('product styles');
+    console.log('styles uploaded!');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+module.exports = { uploadProductStylesData, uploadSampleProductStylesData };

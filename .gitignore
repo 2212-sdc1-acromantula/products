@@ -1,3 +1,5 @@
+.env
+
 // Mac OS files
 .DS_Store
 
@@ -29,3 +31,5 @@ Thumbs.db
 
 // Ignore CSV files
 *.csv
+
+

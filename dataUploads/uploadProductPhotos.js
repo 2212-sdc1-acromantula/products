@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var csv = require('csvtojson');
 require('dotenv/config');
-const { ProductStyles } = require('./model.js');
-const db = require('./db.js');
+const { ProductStyles } = require('../model.js');
+const db = require('../db.js');
 
 async function uploadPhotos(jsonObj) {
   for (let i = 0; i < jsonObj.length; i++) {
@@ -23,10 +23,11 @@ async function uploadPhotos(jsonObj) {
   }
 }
 
-async function uploadData() {
+// real data
+async function uploadProductPhotos() {
   try {
     await db();
-    const photosJson = await csv().fromFile('./sampleData/photosSample.csv');
+    const photosJson = await csv().fromFile('data/photosSample.csv');
     console.time('style photos');
     console.log('uploading photos...');
     await uploadPhotos(photosJson);
@@ -37,4 +38,19 @@ async function uploadData() {
   }
 }
 
-uploadData();
+// sample data
+async function uploadSampleProductPhotos() {
+  try {
+    await db();
+    const photosJson = await csv().fromFile('sampleData/photosSample.csv');
+    console.time('style photos');
+    console.log('uploading photos...');
+    await uploadPhotos(photosJson);
+    console.timeEnd('style photos');
+    console.log('Photos upload complete!');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+module.exports = { uploadProductPhotos, uploadSampleProductPhotos };
