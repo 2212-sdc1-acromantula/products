@@ -16,6 +16,7 @@ async function findStylesByStyleId() {
 
 findStylesByStyleId();
 
+async function uploadPhotos(jsonObj)
 
 // async function uploadRelatedProducts(jsonObj) {
 //   try {

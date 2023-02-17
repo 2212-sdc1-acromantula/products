@@ -6,33 +6,36 @@ const db = require('./db.js')
 
 
 async function uploadProducts(jsonObj) {
-  const products = jsonObj.map((item) => ({
-    id: item.id,
-    name: item.name,
-    slogan: item.slogan,
-    description: item.description,
-    category: item.category,
-    default_price: item.default_price,
-    related_products: []
-  }));
-  try {
-    await models.Products.insertMany(products);
-    console.log('Data added to the database!');
-  } catch (error) {
-    console.log(error);
-    throw error;
+  for (let i = 0; i < jsonObj.length; i++) {
+    const row = jsonObj[i];
+    let product = {
+      id: row.id,
+      name: row.name,
+      slogan: row.slogan,
+      description: row.description,
+      category: row.category,
+      default_price: row.default_price,
+      related_products: []
+    };
+    try {
+      await models.Products.create(product);
+      console.log('Data added to the database!');
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
-}
+};
 
 async function uploadRelatedProducts(jsonObj) {
   let relatedArr = [];
   let current_product_id = 1;
-  try {
-    for (let i = 0; i < jsonObj.length; i++) {
-      const row = jsonObj[i];
-      if (row.current_product_id === current_product_id) {
-        relatedArr.push(Number(row.related_product_id));
-      } else {
+  for (let i = 0; i < jsonObj.length; i++) {
+    const row = jsonObj[i];
+    if (row.current_product_id === current_product_id) {
+      relatedArr.push(Number(row.related_product_id));
+    } else {
+      try {
         // upload existing array if id's don't match
         await models.Products.findOneAndUpdate(
           { id: current_product_id },
@@ -44,13 +47,14 @@ async function uploadRelatedProducts(jsonObj) {
         relatedArr = [];
         current_product_id = row.current_product_id;
         relatedArr.push(row.related_product_id);
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
       }
-    }
-  } catch (error) {
-    console.log(error);
-    throw error;
   }
 }
+
 
 // upload product data
 async function uploadData() {
