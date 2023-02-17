@@ -4,17 +4,17 @@ require('dotenv/config');
 const { ProductStyles } = require('./model.js');
 const db = require('./db.js');
 
-async function uploadPhotos(jsonObj) {
+async function uploadSkus(jsonObj) {
   for (let i = 0; i < jsonObj.length; i++) {
     const row = jsonObj[i];
-    let photoObj = {
-      thumbnail_url: row.thumbnail_url,
-      url: row.url,
+    let skusObj = {
+      size: row.size,
+      quantity: row.quantity,
     };
     try {
       await ProductStyles.findOneAndUpdate(
         { 'results.style_id': row.styleId },
-        { $push: { 'results.$.photos': photoObj } }
+        { $set: { ['results.$.skus.' + row.id]: skusObj } }
       );
     } catch (error) {
       console.log(error);
@@ -26,12 +26,11 @@ async function uploadPhotos(jsonObj) {
 async function uploadData() {
   try {
     await db();
-    const photosJson = await csv().fromFile('./sampleData/photosSample.csv');
-    console.time('style photos');
-    console.log('uploading photos...');
-    await uploadPhotos(photosJson);
-    console.timeEnd('style photos');
-    console.log('Photos upload complete!');
+    const skusJson = await csv().fromFile('./sampleData/skusSample.csv');
+    console.time('skus data');
+    await uploadSkus(skusJson);
+    console.log('Skus upload complete!');
+    console.timeEnd('skus data');
   } catch (error) {
     console.log(error);
   }

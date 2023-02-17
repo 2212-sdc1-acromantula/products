@@ -1,9 +1,8 @@
 var mongoose = require('mongoose');
 var csv = require('csvtojson');
 require('dotenv/config');
-const models = require('./model.js')
-const db = require('./db.js')
-
+const { Products } = require('./model.js');
+const db = require('./db.js');
 
 async function uploadProducts(jsonObj) {
   for (let i = 0; i < jsonObj.length; i++) {
@@ -15,17 +14,16 @@ async function uploadProducts(jsonObj) {
       description: row.description,
       category: row.category,
       default_price: row.default_price,
-      related_products: []
+      related_products: [],
     };
     try {
-      await models.Products.create(product);
-      console.log('Data added to the database!');
+      await Products.create(product);
     } catch (error) {
       console.log(error);
       throw error;
     }
   }
-};
+}
 
 async function uploadRelatedProducts(jsonObj) {
   let relatedArr = [];
@@ -34,44 +32,50 @@ async function uploadRelatedProducts(jsonObj) {
     const row = jsonObj[i];
     if (row.current_product_id === current_product_id) {
       relatedArr.push(Number(row.related_product_id));
-    } else {
+    }
+    if (
+      row.current_product_id !== current_product_id ||
+      i === jsonObj.length - 1
+    ) {
       try {
         // upload existing array if id's don't match
-        await models.Products.findOneAndUpdate(
+        await Products.findOneAndUpdate(
           { id: current_product_id },
           { related_products: relatedArr },
           { upsert: true }
-        )
-        } catch (error) {
-          console.log(error);
-          throw error;
-        }
-        console.log('Data added to the database!');
-        // reset array and update product id
-        relatedArr = [];
-        current_product_id = row.current_product_id;
-        relatedArr.push(row.related_product_id);
+        );
+      } catch (error) {
+        console.log(error);
+        throw error;
       }
+      // reset array and update product id
+      relatedArr = [];
+      current_product_id = row.current_product_id;
+      relatedArr.push(row.related_product_id);
+    }
   }
 }
-
 
 // upload product data
 async function uploadData() {
   try {
     await db();
     const productJson = await csv().fromFile('./sampleData/productSample.csv');
+    console.log('uploading products...');
+    console.time('product data');
     await uploadProducts(productJson);
+    console.log('products finished! uploading related products...');
+    console.timeEnd('product data');
+    console.time('related product data');
     const relatedJson = await csv().fromFile('./sampleData/relatedSample.csv');
     await uploadRelatedProducts(relatedJson);
+    console.log('related products finished!');
   } catch (error) {
     console.log(error);
   }
 }
 
 uploadData();
-
-
 
 // example of batch size: models.Product.insertMany(products, { batchSize: 1000 })
 // if this doesn't work, there are scripts to run in the terminal that can run in diff instances
