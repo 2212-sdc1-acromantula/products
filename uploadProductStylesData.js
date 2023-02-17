@@ -5,7 +5,6 @@ const db = require('./db.js')
 
 
 async function uploadProductStyles(jsonObj) {
-  try {
     let currentProductId
     let resultsArr = []
     for (let i = 0; i < jsonObj.length; i++) {
@@ -17,9 +16,12 @@ async function uploadProductStyles(jsonObj) {
           product_id: currentProductId,
           results: resultsArr
         }
-        console.log(objToInsert)
-        await models.ProductStyles.create(objToInsert);
-        // reset data and update current id
+        try {
+          await models.ProductStyles.create(objToInsert);
+        } catch {
+          console.log(error);
+          throw error;
+        }
         resultsArr = []
         currentProductId = row.productId
       }
@@ -29,22 +31,20 @@ async function uploadProductStyles(jsonObj) {
         original_price: row.original_price,
         sale_price: row.sale_price,
         default: row.default_tyle,
-        photos: [{}],
+        photos: [],
         skus: {}
       }
       resultsArr.push(currentObj)
     }
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
 }
+
 
 async function uploadData() {
   try {
     await db();
     const styleJson = await csv().fromFile('./sampleData/stylesSample.csv');
     await uploadProductStyles(styleJson);
+    console.log('styles uploaded!')
   } catch (error) {
     console.log(error);
   }

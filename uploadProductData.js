@@ -41,16 +41,16 @@ async function uploadRelatedProducts(jsonObj) {
           { id: current_product_id },
           { related_products: relatedArr },
           { upsert: true }
-        );
+        )
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
         console.log('Data added to the database!');
         // reset array and update product id
         relatedArr = [];
         current_product_id = row.current_product_id;
         relatedArr.push(row.related_product_id);
-        } catch (error) {
-          console.log(error);
-          throw error;
-        }
       }
   }
 }
