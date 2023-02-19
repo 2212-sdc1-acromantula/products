@@ -26,6 +26,12 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  features: [
+    {
+      feature: String,
+      value: String,
+    },
+  ],
   related_products: [Number],
 });
 
@@ -72,48 +78,6 @@ const productStylesSchema = new mongoose.Schema({
     },
   ],
 });
-
-// const productStylesSchema = new mongoose.Schema({
-//   product_id: {
-//     type: Number,
-//     required: true
-//   },
-//   results: [
-//     {
-//       style_id: {
-//         type: Number,
-//         required: true
-//       },
-//       name: {
-//         type: String,
-//         required: true
-//       },
-//       original_price: {
-//         type: Number,
-//         required: true
-//       },
-//       sale_price: String,
-//       default: Boolean,
-//       photos: [{
-//         thumbnail_url: String,
-//         url: String
-//       }],
-//       skus: {
-//         type: Object,
-//         of: {
-//           quantity: {
-//             type: Number,
-//             required: true
-//           },
-//           size: {
-//             type: String,
-//             required: true
-//           }
-//         }
-//       }
-//     }
-//   ]
-// })
 
 const models = {
   Products: mongoose.model('Products', productSchema),

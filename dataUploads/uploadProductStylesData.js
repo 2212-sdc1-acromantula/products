@@ -38,11 +38,11 @@ async function uploadProductStyles(jsonObj) {
 }
 
 // upload real data
-async function uploadProductStylesData() {
+async function uploadProductStylesData(csv1) {
   try {
     await db();
     console.time('product styles');
-    const styleJson = await csv().fromFile('data/styles.csv');
+    const styleJson = await csv().fromFile(csv1);
     console.log('uploading style data...');
     await uploadProductStyles(styleJson);
     console.timeEnd('product styles');
@@ -52,19 +52,4 @@ async function uploadProductStylesData() {
   }
 }
 
-// upload sample data
-async function uploadSampleProductStylesData() {
-  try {
-    await db();
-    console.time('product styles');
-    const styleJson = await csv().fromFile('sampleData/stylesSample.csv');
-    console.log('uploading style data...');
-    await uploadProductStyles(styleJson);
-    console.timeEnd('product styles');
-    console.log('styles uploaded!');
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-module.exports = { uploadProductStylesData, uploadSampleProductStylesData };
+module.exports = { uploadProductStylesData };

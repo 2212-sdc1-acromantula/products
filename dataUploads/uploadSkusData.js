@@ -24,10 +24,10 @@ async function uploadSkus(jsonObj) {
 }
 
 // upload real data
-async function uploadSkusData() {
+async function uploadSkusData(csv1) {
   try {
     await db();
-    const skusJson = await csv().fromFile('data/skus.csv');
+    const skusJson = await csv().fromFile(csv1);
     console.time('skus data');
     await uploadSkus(skusJson);
     console.timeEnd('skus data');
@@ -37,18 +37,4 @@ async function uploadSkusData() {
   }
 }
 
-// upload sample data
-async function uploadSampleSkusData() {
-  try {
-    await db();
-    const skusJson = await csv().fromFile('sampleData/skusSample.csv');
-    console.time('skus data');
-    await uploadSkus(skusJson);
-    console.timeEnd('skus data');
-    console.log('Skus upload complete!');
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-module.exports = { uploadSkusData, uploadSampleSkusData };
+module.exports = { uploadSkusData };
