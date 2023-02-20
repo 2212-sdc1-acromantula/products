@@ -52,6 +52,30 @@ app.get('/products/:product_id', async (req, res) => {
   }
 });
 
+//retrieve all styles
+app.get('/products/:product_id/styles', async (req, res) => {
+  const id = req.params.product_id;
+  try {
+    const productStyles = await ProductStyles.find({ product_id: id });
+    res.send(productStyles);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// retrieves related products
+app.get('/products/:product_id/related', async (req, res) => {
+  const id = req.params.product_id;
+  try {
+    const product = await Products.find({ id: id });
+    console.log(product);
+    const relatedProducts = product[0].related_products;
+    res.send(relatedProducts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 app.listen(3000, () => {
   console.log('Server listening on port 3000');
 });
