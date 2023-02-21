@@ -1,4 +1,5 @@
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 
 const express = require('express');
 const app = express();
@@ -9,7 +10,6 @@ mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
 
 const db = mongoose.connection;
 const cors = require('cors');
-const axios = require('axios');
 const { Products, ProductStyles } = require('./model');
 
 db.on('error', (error) => console.error(error));
@@ -22,17 +22,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
 
-// retrieves all products, two params, one for page and another for count
+// retrieves all products
 app.get('/products', async (req, res) => {
-  console.log('products!');
-  console.log(req.query);
   const page = req.query.page || 1;
   const count = req.query.count || 10;
   const products = [];
 
   const startingId = page * 10 - 9;
-  console.log(count);
-  console.log(startingId);
   for (let i = startingId; i <= Number(startingId) + Number(count) - 1; i++) {
     // console.log(i);
     const product = await Products.find({ id: i });
@@ -68,7 +64,6 @@ app.get('/products/:product_id/related', async (req, res) => {
   const id = req.params.product_id;
   try {
     const product = await Products.find({ id: id });
-    console.log(product);
     const relatedProducts = product[0].related_products;
     res.send(relatedProducts);
   } catch (err) {
@@ -79,3 +74,5 @@ app.get('/products/:product_id/related', async (req, res) => {
 app.listen(3000, () => {
   console.log('Server listening on port 3000');
 });
+
+module.exports = { app, db };

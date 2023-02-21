@@ -5,7 +5,7 @@ mongoose.set('strictQuery', false);
 
 const connectToDatabase = async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/SDC', {
+    await mongoose.connect('mongodb://localhost:27017/SDC1', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

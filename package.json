@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "nodemon server.js"
   },
   "repository": {
@@ -28,6 +28,8 @@
   "homepage": "https://github.com/2212-sdc1-acromantula/products#readme",
   "devDependencies": {
     "dotenv": "^16.0.3",
+    "jest": "^29.4.3",
     "nodemon": "^2.0.20"
   }
 }
+
