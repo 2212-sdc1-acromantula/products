@@ -31,14 +31,17 @@ const db = require('../db.js');
 async function uploadPhotos(jsonObj) {
   for (let i = 0; i < jsonObj.length; i++) {
     const row = jsonObj[i];
-    let photoObj = {
-      thumbnail_url: row.thumbnail_url,
-      url: row.url,
-    };
     try {
       await ProductStyles.findOneAndUpdate(
         { 'results.style_id': row.styleId },
-        { $push: { 'results.$.photos': photoObj } }
+        {
+          $push: {
+            'results.$.photos': {
+              thumbnail_url: row.thumbnail_url,
+              url: row.url,
+            },
+          },
+        }
       );
     } catch (error) {
       console.log(error);

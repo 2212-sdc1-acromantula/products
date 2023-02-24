@@ -25,11 +25,11 @@ const sampleData = {
 async function uploadAllData(dataObj) {
   console.time('total time');
   console.log('starting upload...');
-  await uploadProductData(dataObj.productData, dataObj.relatedData);
-  await uploadProductFeatures(dataObj.featuresData);
-  await uploadProductStylesData(dataObj.stylesData);
-  await uploadProductPhotos(dataObj.photosData);
+  // await uploadProductData(dataObj.productData, dataObj.relatedData);
+  // await uploadProductFeatures(dataObj.featuresData);
+  // await uploadProductStylesData(dataObj.stylesData);
   await uploadSkusData(dataObj.skusData);
+  await uploadProductPhotos(dataObj.photosData);
   console.timeEnd('total time');
 }
 

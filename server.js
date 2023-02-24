@@ -4,6 +4,7 @@ dotenv.config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const path = require('path');
 
 mongoose.set('strictQuery', false);
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
@@ -68,6 +69,23 @@ app.get('/products/:product_id/related', async (req, res) => {
     res.send(relatedProducts);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+// loader authenticator
+app.get('/loaderio-b46f6bc857f808626f58311ad2c16120.txt', (req, res) => {
+  const filePath = path.resolve(
+    __dirname,
+    'test',
+    'loaderio-b46f6bc857f808626f58311ad2c16120.txt'
+  );
+
+  try {
+    res.sendFile(filePath);
+    console.log('File sent:', filePath);
+  } catch (err) {
+    console.error('Error sending file:', err);
+    res.status(err.status).end();
   }
 });
 
